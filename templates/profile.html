@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Hồ sơ người dùng{% endblock %}
+
+{% block content %}
+
+<style>
+    .profile-container {
+        background: linear-gradient(160deg, #1e1e2d, #2a2a40);
+        padding: 35px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+        color: #e2e4f3;
+    }
+
+    .profile-avatar {
+        width: 130px;
+        height: 130px;
+        border-radius: 100%;
+        object-fit: cover;
+        border: 3px solid #3c4a88;
+        box-shadow: 0 0 12px rgba(80, 120, 255, 0.3);
+    }
+
+    .skill-chip {
+        display: inline-block;
+        background: #324b83;
+        padding: 6px 12px;
+        border-radius: 8px;
+        margin: 5px;
+        color: #dbe3ff;
+        font-size: 13px;
+    }
+
+    .section-title {
+        font-weight: 600;
+        font-size: 18px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        color: #aeb8ff;
+    }
+
+    .saved-card {
+        background: #252538;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #30304a;
+        color: #e0e0ff;
+        transition: .2s;
+    }
+
+    .saved-card:hover {
+        background: #30304a;
+        transform: translateY(-2px);
+    }
+
+    .upload-btn {
+        background: #4b6cff;
+        border: none;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .upload-btn:hover {
+        background: #6c84ff;
+    }
+</style>
+
+<script>
+    function triggerUpload() {
+        document.getElementById("avatarInput").click();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("avatarInput");
+        if (input) {
+            input.addEventListener("change", function () {
+                if (this.files.length > 0) {
+                    document.getElementById("avatarForm").submit();
+                }
+            });
+        }
+    });
+</script>
+
+<div class="container mt-4">
+    <div class="profile-container">
+
+        <!-- HEADER -->
+        <div class="d-flex align-items-center">
+            <img src="{{ user.avatar }}" class="profile-avatar me-4">
+
+            <div>
+                <h2 style="margin: 0; color: #fff;">{{ user.username }}</h2>
+                <p class="text-muted" style="margin: 4px 0;">
+                    Mục tiêu: <strong>{{ user.goal or "Chưa cập nhật" }}</strong>
+                </p>
+
+                <!-- Upload avatar -->
+                <form id="avatarForm" action="/profile/upload-avatar" method="POST" enctype="multipart/form-data">
+                    <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none">
+                    <button type="button" class="upload-btn mt-1" onclick="triggerUpload()">Cập nhật Avatar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="section-title">Giới thiệu</div>
+        <p>{{ user.about or "Chưa có mô tả." }}</p>
+
+        <!-- SKILLS -->
+        <div class="section-title">Kỹ năng</div>
+        {% if user.skills %}
+        {% for s in user.skills %}
+        <span class="skill-chip">{{ s }}</span>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted">Chưa cập nhật kỹ năng.</p>
+        {% endif %}
+
+        <!-- SAVED COURSES -->
+        <div class="section-title">Khóa học đã lưu</div>
+
+        {% if saved_courses %}
+        {% for c in saved_courses %}
+        <div class="saved-card mb-2">
+            <a href="/courses/{{ c._id }}" style="text-decoration:none; color:#dbe1ff;">
+                <strong>{{ c.title }}</strong>
+                <div style="font-size:13px; color:#9ca4c9;">{{ c.category }} • {{ c.difficulty }}</div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted">Bạn chưa lưu khóa học nào.</p>
+        {% endif %}
+
+        <a href="/profile/edit" class="btn btn-primary mt-3">Chỉnh sửa hồ sơ</a>
+
+    </div>
+</div>
+
+{% endblock %}

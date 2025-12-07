@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<style>
+    .summary-box {
+        background: linear-gradient(160deg, #23242e, #2d2f3e);
+        padding: 25px;
+        border-radius: 14px;
+        color: #eaeaff;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        transition: .2s;
+    }
+
+    .summary-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+    }
+
+    .section-title {
+        color: white;
+        margin: 20px 0 10px;
+        font-weight: bold;
+    }
+
+    .chart-box {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .menu-box {
+        background: linear-gradient(140deg, #1f1f2e, #292b3b);
+        padding: 22px;
+        border-radius: 14px;
+        text-align: center;
+        color: #eaeaff;
+        text-decoration: none;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45);
+        transition: .2s;
+    }
+
+    .menu-box:hover {
+        transform: translateY(-5px);
+        background: linear-gradient(140deg, #2a2a40, #36384e);
+    }
+</style>
+
+<h2 class="section-title">Bảng điều khiển quản trị</h2>
+
+<!-- =================== SUMMARY =================== -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="summary-box">
+            <h4>Tổng người dùng</h4>
+            <h2>{{ total_users }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="summary-box">
+            <h4>Tổng khóa học</h4>
+            <h2>{{ total_courses }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="summary-box">
+            <h4>Tổng lĩnh vực</h4>
+            <h2>{{ total_categories }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<hr class="my-4" style="border-color:#4d4d6a;">
+
+
+<!-- =================== CHARTS =================== -->
+<div class="row g-4">
+
+    <!-- Heatmap -->
+    <div class="col-md-6">
+        <h4 class="section-title">Hoạt động người dùng theo ngày</h4>
+        <div class="chart-box">
+            <div id="heatmapChart" style="height: 300px;"></div>
+        </div>
+    </div>
+
+    <!-- Hot Courses -->
+    <div class="col-md-6">
+        <h4 class="section-title">Top khóa học được lưu nhiều nhất</h4>
+        <div class="chart-box">
+            <div id="hotCoursesChart" style="height: 300px;"></div>
+        </div>
+    </div>
+
+</div>
+
+<hr class="my-4" style="border-color:#4d4d6a;">
+
+
+<!-- =================== QUICK LINKS =================== -->
+<h4 class="section-title">Chức năng quản trị</h4>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <a href="/admin/courses" class="menu-box d-block">
+            <h4>Quản lý khóa học</h4>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/admin/users" class="menu-box d-block">
+            <h4>Danh sách người dùng</h4>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/admin/teachers" class="menu-box d-block">
+            <h4>Quản lý giảng viên</h4>
+        </a>
+    </div>
+</div>
+
+
+<!-- =================== APEXCHARTS SCRIPTS =================== -->
+<script>
+    let heatmapData = {{ heatmap_data | tojson }};
+    const hotCourses = {{ hot_courses | tojson }};
+
+    // ApexCharts heatmap
+    new ApexCharts(document.querySelector("#heatmapChart"), {
+            chart: { type: "bar", height: 300 },
+            series: [{
+                name: "Tổng hoạt động",
+                data: heatmapData.map(d => d.total)
+            }],
+            xaxis: {
+                categories: heatmapData.map(d => d.day),
+                title: { text: "Ngày" }
+            },
+            yaxis: {
+                title: { text: "Số lượng hoạt động" }
+            },
+            tooltip: {
+                theme: "dark",
+                custom: function ({ dataPointIndex }) {
+                    let d = heatmapData[dataPointIndex];
+                    let html = `<div style='padding:10px'>`;
+                    html += `<strong>${d.day}</strong><br>`;
+
+                    for (const [action, count] of Object.entries(d.actions)) {
+                        html += `${action}: <strong>${count}</strong><br>`;
+                    }
+
+                    html += `</div>`;
+                    return html;
+                }
+            }
+        }).render();
+
+    // Hot courses bar
+    new ApexCharts(document.querySelector("#hotCoursesChart"), {
+        chart: { type: "bar", height: 300 },
+        series: [{ name: "Saves", data: hotCourses.map(c => c.saves) }],
+        xaxis: { categories: hotCourses.map(c => c.title) },
+        plotOptions: { bar: { borderRadius: 6, distributed: true } },
+        dataLabels: { enabled: true , style: { colors: ["#000"] } },
+        tooltip: { theme: 'dark' }
+    }).render();
+</script>
+
+
+{% endblock %}

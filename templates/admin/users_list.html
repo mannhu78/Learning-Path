@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Quản lý người dùng{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Danh sách người dùng</h2>
+
+<!-- BỘ LỌC -->
+<form class="row g-3 mb-4" method="GET">
+
+    <!-- Role -->
+    <div class="col-md-3">
+        <label class="form-label">Role</label>
+        <select name="role" class="form-select">
+            <option value="all">Tất cả</option>
+
+            {% for r in roles %}
+            <option value="{{ r }}" {% if request.args.get('role')==r %}selected{% endif %}>
+                {{ r }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Domain -->
+    <div class="col-md-3">
+        <label class="form-label">Lĩnh vực</label>
+        <select name="domain" class="form-select">
+            <option value="all">Tất cả</option>
+
+            {% for d in domains %}
+            {% if d %}
+            <option value="{{ d }}" {% if request.args.get('domain')==d %}selected{% endif %}>
+                {{ d }}
+            </option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Keyword -->
+    <div class="col-md-4">
+        <label class="form-label">Từ khóa</label>
+        <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên, mục tiêu..."
+            value="{{ request.args.get('keyword') }}">
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-primary w-100">Lọc</button>
+    </div>
+
+</form>
+
+
+
+
+<table class="table table-dark table-hover mt-3">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Lĩnh vực</th>
+            <th>Mục tiêu</th>
+            <th>Kỹ năng</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.username }}</td>
+
+            <td>
+                <span class="badge bg-info text-dark">{{ u.role }}</span>
+            </td>
+
+            <td>{{ u.domain or "Không có" }}</td>
+            <td>{{ u.goal or "Không có" }}</td>
+
+            <td>
+                {% if u.skills %}
+                {{ u.skills | join(", ") }}
+                {% else %}
+                Không có
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="/admin/users/{{ u._id }}" class="btn btn-primary btn-sm">
+                    Xem chi tiết
+                </a>
+                <a href="{{ url_for('admin_users.delete_user', user_id=u._id) }}" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
+                    Xóa
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}

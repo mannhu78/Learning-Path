@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Lộ trình học{% endblock %}
+
+{% block content %}
+
+<style>
+    /* TIMELINE WRAPPER */
+    .timeline {
+        position: relative;
+        margin-left: 40px;
+        padding-left: 20px;
+        border-left: 3px solid #4b6cff;
+    }
+
+    /* TIMELINE ITEM */
+    .timeline-item {
+        position: relative;
+        margin-bottom: 35px;
+        padding: 22px;
+        background: linear-gradient(145deg, #1d1d2c, #23233b);
+        border-radius: 14px;
+        border: 1px solid #2d2d3c;
+        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.45);
+        color: #e3e3f0;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .timeline-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.55);
+    }
+
+    /* TIMELINE DOT */
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -34px;
+        top: 18px;
+        width: 18px;
+        height: 18px;
+        background-color: #4b6cff;
+        border-radius: 50%;
+        border: 3px solid #ffffff;
+        box-shadow: 0 0 10px #4b6cff;
+    }
+
+    .week-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .course-meta span {
+        color: #b0b0c9;
+        display: inline-block;
+        margin-right: 14px;
+        font-size: 14px;
+    }
+
+    .badge-skill {
+        background: #2d3850;
+        color: #9fb7ff;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-right: 6px;
+        margin-top: 4px;
+        display: inline-block;
+    }
+
+    .btn-view-course {
+        background: #4b6cff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        color: white;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .btn-view-course:hover {
+        background: #6b8bff;
+        color: white;
+    }
+
+    .header-text {
+        color: #fff;
+    }
+
+    .text-sub {
+        color: #b6b6d1;
+    }
+</style>
+
+<h2 class="mb-2 header-text">Lộ trình học được đề xuất</h2>
+<p class="text-sub">Dựa trên mục tiêu, kỹ năng và định hướng nghề nghiệp của bạn</p>
+
+<div class="timeline mt-4">
+    {% for item in timeline %}
+    <div class="timeline-item">
+
+        <div class="week-title">Tuần {{ item.week }}: {{ item.title }}</div>
+
+        {% if item.description %}
+        <p class="mt-2" style="color:#d0d0e4;">{{ item.description }}</p>
+        {% endif %}
+
+        <div class="course-meta mt-2">
+            <span><strong>Lĩnh vực:</strong> {{ item.category }}</span>
+            <span><strong>Độ khó:</strong> {{ item.difficulty }}</span>
+            <span><strong>Thời lượng:</strong> {{ item.duration_weeks }} tuần</span>
+        </div>
+
+        {% if item.skills_required %}
+        <div class="mt-3">
+            <strong class="text-sub">Kỹ năng yêu cầu:</strong><br>
+            {% for skill in item.skills_required %}
+            <span class="badge-skill">{{ skill }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mt-3">
+            <a href="/courses/{{ item._id }}" class="btn-view-course">Xem chi tiết khóa học</a>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách khóa học{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Card khóa học */
+    .course-card {
+        background: #1e1e2b;
+        border: 1px solid #2b2b3b;
+        border-radius: 15px;
+        padding: 20px;
+        transition: 0.25s;
+        height: 100%;
+    }
+
+    .course-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.45);
+        border-color: #626eff;
+    }
+
+    .course-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .course-meta {
+        font-size: 0.9rem;
+        color: #a6a6bb;
+    }
+
+    .filter-box {
+        background: #1c1c28;
+        border: 1px solid #2d2d3a;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .pagination .page-link {
+        background: #1c1c28;
+        border-color: #2d2d3a;
+        color: #ccc;
+    }
+
+    .pagination .active .page-link {
+        background: #646cff;
+        border-color: #646cff;
+        color: white;
+    }
+
+   
+</style>
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white">Danh sách khóa học</h2>
+
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <a href="{{ url_for('course.course_add') }}" class="btn btn-primary">
+        + Thêm khóa học
+    </a>
+    {% endif %}
+</div>
+
+
+<!-- BỘ LỌC -->
+<div class="filter-box mb-4">
+    <form method="GET" class="row g-3">
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Lĩnh vực</label>
+            <select name="category" class="form-select">
+                <option value="all">Tất cả</option>
+                {% for cat in all_categories %}
+                <option value="{{ cat }}" {% if request.args.get('category')==cat %}selected{% endif %}>
+                    {{ cat }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Lọc theo Giảng viên -->
+        <div class="col-md-3 ">
+            <label class="form-label text-white">Giảng viên</label>
+            <select name="instructor" class="form-select">
+                <option value="all">Tất cả giảng viên</option>
+                {% for t in teachers %}
+                <option value="{{ t._id }}" {% if selected_instructor==t._id|string %}selected{% endif %}>
+                    {{ t.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label text-white">Độ khó</label>
+            <select name="difficulty" class="form-select">
+                <option value="all">Tất cả</option>
+                <option value="beginner" {% if request.args.get('difficulty')=='beginner' %}selected{% endif %}>Beginner
+                </option>
+                <option value="intermediate" {% if request.args.get('difficulty')=='intermediate' %}selected{% endif %}>
+                    Intermediate</option>
+                <option value="advanced" {% if request.args.get('difficulty')=='advanced' %}selected{% endif %}>Advanced
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Kỹ năng yêu cầu</label>
+            <select name="skill" class="form-select">
+                <option value="all">Tất cả</option>
+                {% for sk in all_skills %}
+                <option value="{{ sk }}" {% if request.args.get('skill')==sk %}selected{% endif %}>
+                    {{ sk }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Từ khóa</label>
+            <input type="text" name="keyword" class="form-control" placeholder="Ví dụ: python, web, api..."
+                value="{{ request.args.get('keyword') }}">
+        </div>
+
+        <div class="col-md-1 d-flex align-items-end">
+            <button class="btn btn-primary w-100">Lọc</button>
+        </div>
+
+    </form>
+</div>
+
+
+<!-- DANH SÁCH KHÓA HỌC (CARD UI) -->
+{% if courses %}
+
+<div class="row">
+    {% for c in courses %}
+    <div class="col-md-4 mb-4">
+        <div class="course-card">
+
+            <div class="course-title">{{ c.title }}</div>
+
+            <div class="course-meta mt-2">
+                <div>Lĩnh vực: {{ c.category }}</div>
+                <div>Độ khó: {{ c.difficulty }}</div>
+                <div>Thời lượng: {{ c.duration_weeks }} tuần</div>
+
+                <div class="mt-1">
+                    <strong>Kỹ năng:</strong>
+                    {% if c.skills_required %}
+                    {{ ", ".join(c.skills_required) }}
+                    {% else %}
+                    Không yêu cầu
+                    {% endif %}
+                </div>
+            </div>
+
+            <a href="{{ url_for('course.course_detail', cid=c['_id']) }}" class="btn btn-outline-primary mt-3 w-100">
+                Xem chi tiết
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<p class="text-muted text-center">Không tìm thấy khóa học nào phù hợp.</p>
+{% endif %}
+
+
+<!-- PHÂN TRANG -->
+{% if total_pages > 1 %}
+<nav>
+    <ul class="pagination justify-content-center mt-4">
+
+        <!-- Prev -->
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('course.course_list',
+                                category=request.args.get('category'),
+                                difficulty=request.args.get('difficulty'),
+                                skill=request.args.get('skill'),
+                                keyword=request.args.get('keyword'),
+                                page=page-1) }}">
+                « Trước
+            </a>
+        </li>
+
+        <!-- Số trang -->
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('course.course_list',
+                                category=request.args.get('category'),
+                                difficulty=request.args.get('difficulty'),
+                                skill=request.args.get('skill'),
+                                keyword=request.args.get('keyword'),
+                                page=p) }}">
+                {{ p }}
+            </a>
+        </li>
+        {% endfor %}
+
+        <!-- Next -->
+        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('course.course_list',
+                                category=request.args.get('category'),
+                                difficulty=request.args.get('difficulty'),
+                                skill=request.args.get('skill'),
+                                keyword=request.args.get('keyword'),
+                                page=page+1) }}">
+                Sau »
+            </a>
+        </li>
+
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

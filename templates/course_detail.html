@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    /* HEADER */
+    .course-header {
+        padding: 30px 0;
+        border-bottom: 1px solid #2e2e3a;
+        color: #fff;
+    }
+
+    .course-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .course-meta {
+        color: #b0b0cc;
+        margin-top: 10px;
+        font-size: 15px;
+    }
+
+    /* CARD SECTION (Dark Box) */
+    .section-card {
+        background: #1e1e2b;
+        padding: 25px;
+        margin-top: 25px;
+        border-radius: 12px;
+        border: 1px solid #2d2d3a;
+        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.4);
+        color: #e3e3e3;
+    }
+
+    /* What you will learn */
+    .learn-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        color: #ccc;
+    }
+
+    .learn-item i {
+        color: #6b8bff;
+        margin-right: 10px;
+        margin-top: 2px;
+    }
+
+    /* Skill chip */
+    .skill-chip {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #2d3850;
+        color: #9fb7ff;
+        border-radius: 8px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    /* Accordion */
+    .accordion-button {
+        background: #232334;
+        color: white;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: #2c2c43;
+        color: #9fb4ff;
+    }
+
+    .accordion-item {
+        background: #1c1c28;
+        border: 1px solid #2c2c3a;
+        margin-bottom: 6px;
+    }
+
+    .accordion-body {
+        background: #1c1c28;
+        color: #d7d7e7;
+    }
+
+    /* Markdown */
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3 {
+        margin-top: 20px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .markdown-content code {
+        background: #333344;
+        padding: 2px 5px;
+        border-radius: 4px;
+        color: #e3e3e3;
+    }
+
+    .markdown-content p,
+    .markdown-content li {
+        color: #ccc;
+    }
+
+    /* Instructor */
+    .instructor-card img {
+        border: 3px solid #6b8bff;
+    }
+
+    /* Save button */
+    .btn-save {
+        margin-top: 20px;
+        margin-right: 10px;
+    }
+    .text-muted {
+        color: white !important;
+    }
+</style>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="course-header">
+        <h2 class="course-title">{{ course.title }}</h2>
+
+        <p class="course-meta">
+            {{ course.category }} •
+            Độ khó: {{ course.difficulty }} •
+            {{ course.duration_weeks }} tuần
+        </p>
+
+        <p style="color:#d1d1e0;">{{ course.description }}</p>
+    </div>
+
+
+    <!-- WHAT YOU WILL LEARN -->
+    {% if course.learning_objectives %}
+    <div class="section-card">
+        <h4 class="text-white">Bạn sẽ học được gì?</h4>
+        <div class="mt-3">
+            {% for obj in course.learning_objectives %}
+            <div class="learn-item">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>{{ obj }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- SKILLS -->
+    {% if course.skills_required %}
+    <div class="section-card">
+        <h4 class="text-white">Kỹ năng yêu cầu</h4>
+        <div class="mt-2">
+            {% for skill in course.skills_required %}
+            <span class="skill-chip">{{ skill }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- OUTLINE -->
+    {% if course.course_outline %}
+    <div class="section-card">
+        <h4 class="text-white">Nội dung khóa học</h4>
+
+        <div class="accordion mt-3" id="outlineAccordion">
+            {% for item in course.course_outline %}
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ loop.index }}" >
+                        {{ item.title }} 
+                    </button>
+                </h2>
+
+                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        {{ item.content }}
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+    {% endif %}
+
+
+    <!-- THEORY -->
+    <div class="section-card">
+        <h4 class="text-white">Lý thuyết khóa học</h4>
+        <div class="markdown-content mt-3">
+            {{ theory_html | safe }}
+        </div>
+    </div>
+
+
+    <!-- RESOURCES -->
+    {% if course.resources %}
+    <div class="section-card">
+        <h4 class="text-white">Tài liệu tham khảo</h4>
+        <ul class="mt-2">
+            {% for res in course.resources %}
+            <li><a href="{{ res }}" target="_blank">{{ res }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+
+    {% if instructor %}
+    <div class="section-card instructor-card">
+        <h4 class="text-white">Giảng viên</h4>
+    
+        <div class="d-flex align-items-center mt-3">
+            <img src="{{ instructor.avatar }}" width="80" class="rounded-circle me-3">
+    
+            <div>
+                <h5 class="text-white">{{ instructor.name }}</h5>
+                <p class="text-muted">{{ instructor.bio }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    <!-- SAVE / UNSAVE -->
+    {% if current_user.is_authenticated %}
+
+    {% if course._id|string in saved_ids %}
+        <a href="{{ url_for('profile.unsave_course', cid=course._id) }}" class="btn btn-outline-danger btn-save">
+            Bỏ lưu khóa học
+        </a>
+    {% else %}
+        <a href="{{ url_for('profile.save_course', cid=course._id) }}" class="btn btn-outline-primary btn-save">
+            Lưu khóa học
+        </a>
+    {% endif %}
+
+    <a href="{{ url_for('course.course_list') }}" class="btn btn-outline-secondary btn-save">
+        Quay về danh sách
+    </a>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

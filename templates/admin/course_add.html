@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Thêm khóa học{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width: 700px;">
+    <h3 class="mb-3 text-white">Thêm khóa học mới</h3>
+
+    <form method="POST">
+
+        <label class="text-white">Tiêu đề</label>
+        <input type="text" name="title" class="form-control" required>
+
+        <label class="mt-3 text-white">Mô tả</label>
+        <textarea name="description" class="form-control" rows="3"></textarea>
+
+        <!-- ===== DROPDOWN LĨNH VỰC ===== -->
+        <label class="mt-3 text-white">Lĩnh vực</label>
+        <select name="category" id="categorySelect" class="form-control">
+            <option value="">-- Chọn lĩnh vực --</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- ===== DROPDOWN GIẢNG VIÊN ===== -->
+        <label class="mt-3 text-white">Giảng viên</label>
+        <select name="instructor_id" id="teacherSelect" class="form-control">
+            <option value="">-- Chọn lĩnh vực trước --</option>
+        </select>
+
+        <label class="mt-3 text-white">Độ khó</label>
+        <select name="difficulty" class="form-control">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+        </select>
+
+        <label class="mt-3 text-white">Thời lượng (tuần)</label>
+        <input type="number" name="duration_weeks" class="form-control">
+
+        <label class="mt-3 text-white">Kỹ năng yêu cầu (cách nhau dấu phẩy)</label>
+        <input type="text" name="skills_required" class="form-control">
+
+        <label class="mt-3 text-white">Lý thuyết (Markdown)</label>
+        <textarea name="theory" class="form-control" rows="6"></textarea>
+
+        <label class="mt-3 text-white">Tài nguyên (mỗi dòng 1 link)</label>
+        <textarea name="resources" class="form-control" rows="4"></textarea>
+
+        <button class="btn btn-primary mt-4">Lưu</button>
+    </form>
+
+</div>
+
+
+<!-- ========== SCRIPT LỌC GIẢNG VIÊN THEO LĨNH VỰC ========== -->
+<script>
+    document.getElementById("categorySelect").addEventListener("change", function () {
+        const category = this.value;
+        const teacherSelect = document.getElementById("teacherSelect");
+
+        teacherSelect.innerHTML = `<option>Đang tải...</option>`;
+
+        fetch(`/admin/teachers/by-category?category=${encodeURIComponent(category)}`)
+            .then(res => res.json())
+            .then(data => {
+                teacherSelect.innerHTML = `<option value="">-- Chọn giảng viên --</option>`;
+
+                if (data.length === 0) {
+                    teacherSelect.innerHTML = `<option value="">(Không có giảng viên phù hợp)</option>`;
+                    return;
+                }
+
+                data.forEach(t => {
+                    teacherSelect.innerHTML += `
+                    <option value="${t._id}">${t.name}</option>
+                `;
+                });
+            })
+            .catch(err => {
+                teacherSelect.innerHTML = `<option value="">Lỗi tải giảng viên</option>`;
+                console.error(err);
+            });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Thông tin người dùng{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3>Thông tin người dùng</h3>
+    <hr>
+
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Mục tiêu:</strong> {{ user.goal or "Chưa cập nhật" }}</p>
+    <p><strong>Lĩnh vực quan tâm:</strong> {{ user.domain or "Chưa có" }}</p>
+
+    <p><strong>Kỹ năng:</strong><br>
+        {% if user.skills %}
+        {% for s in user.skills %}
+        <span class="badge bg-info text-dark me-1" >{{ s }}</span>
+        {% endfor %}
+        {% else %}
+        <span class="text-muted" style="color: white !important;">Chưa có kỹ năng</span>
+        {% endif %}
+    </p>
+
+    <hr>
+
+    <h4>Khóa học đã lưu</h4>
+    {% if saved_courses %}
+    <ul>
+        {% for c in saved_courses %}
+        <li>
+            <a href="/courses/{{ c._id }}" target="_blank">
+                {{ c.title }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-muted" style="color: white !important;">Không có khóa học nào.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

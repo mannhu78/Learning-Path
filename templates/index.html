@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ - Learning Path{% endblock %}
+
+{% block content %}
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #2a2a40, #1d1d2e);
+        padding: 60px 40px;
+        border-radius: 20px;
+        box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
+        color: #fff;
+    }
+
+    .hero-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.85;
+        margin-top: 10px;
+    }
+
+    .cta-buttons .btn {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        margin-right: 10px;
+        margin-top: 20px;
+    }
+
+    .feature-card {
+        background: #1e1e2b;
+        border: 1px solid #333344;
+        padding: 25px;
+        border-radius: 15px;
+        color: #ddd;
+        transition: 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0px 6px 20px rgba(0,0,0,0.5);
+        border-color: #5555ff;
+    }
+
+    .feature-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+        color: #6b8bff;
+    }
+    .feature-card:hover img {
+    box-shadow: 0 0 12px #6b8bff;
+}
+
+</style>
+
+
+<div class="hero-section mb-5">
+    <h1 class="hero-title">Nền Tảng Gợi Ý Lộ Trình Học Tập Thông Minh</h1>
+    <p class="hero-subtitle">
+        Hệ thống giúp bạn xác định mục tiêu học tập, phân tích kỹ năng hiện tại,
+        và đề xuất khóa học phù hợp theo từng tuần.  
+        <br> Bắt đầu hành trình học tập của bạn ngay hôm nay!
+    </p>
+
+    <div class="cta-buttons">
+        <a href="{{ url_for('course.course_list') }}" class="btn btn-primary">Khám phá Khóa học</a>
+
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light">
+                Đăng nhập để bắt đầu
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<!-- Features section -->
+<div class="row text-center">
+    <div class="col-md-4 mb-4">
+        <div class="feature-card">
+            <div class="feature-icon"><img src="/static/img/online-learning.png" alt="Online Learning" style="width: 50px;"></div>
+            <h4>Kho khóa học phong phú</h4>
+            <p>
+                Gồm hơn 100 khóa học thuộc các lĩnh vực CNTT: Web, Mobile, AI, DevOps, Cloud, Cybersecurity.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="feature-card">
+            <div class="feature-icon"><img src="/static/img/analysis.png" alt="Online Learning" style="width: 50px;"></div>
+            <h4>Gợi ý </h4>
+            <p>
+                Phân tích mục tiêu, kỹ năng hiện tại và đề xuất lộ trình học cá nhân hóa theo từng tuần.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="feature-card">
+            <div class="feature-icon"><img src="/static/img/route.png" alt="Online Learning" style="width: 50px;"></div>
+            <h4>Lộ trình rõ ràng</h4>
+            <p>
+                Timeline học tập từ 4–8 tuần, mô tả chi tiết các kỹ năng cần đạt được.
+            </p>
+        </div>
+    </div>
+</div>
+<!-- TEAM SECTION -->
+<div class="mt-5">
+    <h3 class="text-white mb-4">Đội ngũ giảng viên</h3>
+
+    <div class="row">
+        {% for t in teachers %}
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-3 text-center">
+
+                <img src="{{ t.avatar }}" class="rounded-circle mb-3"
+                    style="width: 90px; height: 90px; border: 3px solid #6b8bff;">
+
+                <h5 class="text-white">{{ t.name }}</h5>
+                <p style="color:#ccc; min-height: 60px;">
+                    {{ t.bio }}
+                </p>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="{{ url_for('course.course_list') }}" class="btn btn-outline-light">
+            Xem các khóa học do giảng viên phụ trách
+        </a>
+    </div>
+</div>
+
+{% endblock %}

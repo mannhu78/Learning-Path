@@ -1,0 +1,128 @@
+/* ====== GLOBAL DARK THEME ====== */
+body {
+    background: linear-gradient(145deg, #1b1b27, #12121a);
+    color: #e8e8e8;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar-dark {
+    background: #0c0c12 !important;
+}
+
+.navbar .nav-link {
+    color: #c7c7d1 !important;
+}
+
+.navbar .nav-link:hover {
+    color: #6b8bff !important;
+}
+
+/* CARDS */
+.card {
+    background: #1e1e2b;
+    border: 1px solid #2d2d3a;
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: #4f57ff;
+    border-color: #4f57ff;
+}
+
+.btn-secondary {
+    background: #2f2f3f;
+    border-color: #2f2f3f;
+}
+
+.btn-primary:hover {
+    background: #636bff;
+}
+
+.btn-outline-primary {
+    color: #8ea2ff;
+    border-color: #8ea2ff;
+}
+
+.btn-outline-primary:hover {
+    background: #8ea2ff;
+    color: #000;
+}
+
+/* FORM CONTROLS */
+.form-control {
+    background: #2d2d3a;
+    color: #e8e8e8;
+    border: 1px solid #444;
+}
+
+.form-control:focus {
+    border-color: #6b8bff;
+    box-shadow: 0 0 0 0.2rem rgba(107, 139, 255, 0.3);
+}
+
+/* TABLE */
+.table {
+    background: #1e1e2b;
+    color: white;
+}
+
+.table thead {
+    background: #2a2a3b;
+}
+.footer-dark {
+    background: #12121b;
+    color: #e0e0e0;
+    text-align: center;
+    border-top: 1px solid #2a2a35;
+}
+
+.footer-dark h5 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.footer-links a {
+    margin: 0 10px;
+    color: #8fa3ff;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.footer-links a:hover {
+    color: #cdd5ff;
+    text-decoration: underline;
+}
+
+.footer-copy {
+    font-size: 14px;
+    color: #888;
+}
+.text-muted.mb-3 {
+    color: white !important;
+}
+/* FIX HOÀN TOÀN FORM-SELECT CHO DARK MODE */
+.form-select,
+.form-select:focus,
+.form-select:hover {
+    background-color: #1f1f2d !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+}
+
+/* Dropdown menu background */
+.form-select option {
+    background-color: #1f1f2d !important;
+    color: #ffffff !important;
+}
+
+/* Một số browser cần cái này để hiển thị text trong dropdown */
+select option:checked,
+select option:hover,
+select option:focus {
+    background-color: #29293a !important;
+    color: #ffffff !important;
+}

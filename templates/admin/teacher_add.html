@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Thêm giảng viên{% endblock %}
+
+{% block content %}
+
+<div class="edit-box mt-4">
+
+    <h3 class="text-white">Thêm giảng viên</h3>
+    <hr style="border-color:#3d3d57;">
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <label>Tên giảng viên</label>
+        <input type="text" name="name" class="form-control" required>
+
+        <label>Mô tả / Kinh nghiệm</label>
+        <textarea name="bio" class="form-control" rows="4"></textarea>
+
+        <label>Ảnh đại diện</label>
+        <input type="file" name="avatar" class="form-control">
+
+        <button class="btn-save mt-4">Thêm giảng viên</button>
+    </form>
+</div>
+
+{% endblock %}

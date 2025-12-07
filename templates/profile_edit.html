@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Chỉnh sửa hồ sơ{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-container {
+        max-width: 650px;
+        background: linear-gradient(165deg, #1e1e2d, #28283d);
+        padding: 35px;
+        margin: auto;
+        border-radius: 14px;
+        color: #e6e8ff;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+        border: 1px solid #33334e;
+    }
+
+    .edit-title {
+        font-weight: 700;
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #ffffff;
+    }
+
+    label {
+        margin-top: 18px;
+        font-weight: 500;
+        color: #bfc5ff;
+    }
+
+    .form-control {
+        background: #2b2b40;
+        border: 1px solid #3e3e55;
+        color: #e6e8ff;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        background: #2f2f46;
+        border-color: #5566ff;
+        color: #fff;
+        box-shadow: 0 0 0 0.15rem rgba(85, 102, 255, .4);
+    }
+
+    .btn-save {
+        margin-top: 25px;
+        background: #4b6cff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        width: 100%;
+        transition: .2s;
+    }
+
+    .btn-save:hover {
+        background: #6b85ff;
+    }
+</style>
+
+<div class="edit-container mt-4">
+
+    <div class="edit-title">Chỉnh sửa hồ sơ</div>
+    <hr style="border-color:#3d3d57;">
+
+    <form method="POST">
+
+        <label>Giới thiệu</label>
+        <textarea name="about" class="form-control" rows="3">{{ user.about }}</textarea>
+
+        <label>Mục tiêu nghề nghiệp</label>
+        <input type="text" name="goal" class="form-control" value="{{ user.goal }}">
+
+        <label>Lĩnh vực</label>
+        <input type="text" name="domain" class="form-control" value="{{ user.domain }}">
+
+        <label>Kỹ năng (ngăn cách bằng dấu phẩy)</label>
+        <input type="text" name="skills" class="form-control" value="{{ skills_str }}">
+
+        <button class="btn-save">Lưu thay đổi</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Quản lý giảng viên{% endblock %}
+
+{% block content %}
+
+<style>
+    .teacher-card {
+        background: #1e1e2d;
+        padding: 18px;
+        border-radius: 12px;
+        color: white;
+        border: 1px solid #33334e;
+        transition: .2s;
+    }
+
+    .teacher-card:hover {
+        background: #2b2b3c;
+        transform: translateY(-4px);
+    }
+
+    .teacher-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4c70ff;
+    }
+    .text-muted {
+        color: white !important;
+    }
+</style>
+
+<h2 class="text-white mb-4">Quản lý giảng viên</h2>
+
+<a href="{{ url_for('admin_teacher.teacher_add') }}" class="btn btn-primary mb-3">+ Thêm giảng viên</a>
+
+<div class="row g-4">
+
+    {% for t in teachers %}
+    <div class="col-md-4">
+        <div class="teacher-card d-flex align-items-center">
+
+            <img src="{{ t.avatar }}" class="teacher-avatar me-3">
+
+            <div>
+                <h5 class="mb-1">{{ t.name }}</h5>
+                <p class="text-muted small" >{{ t.bio[:60] }}...</p>
+
+                <a href="{{ url_for('admin_teacher.teacher_edit', tid=t._id) }}" class="btn btn-warning btn-sm">Sửa</a>
+
+                <a href="{{ url_for('admin_teacher.teacher_delete', tid=t._id) }}" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Xóa giảng viên này?')">Xóa</a>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

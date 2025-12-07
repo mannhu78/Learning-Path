@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}Quản lý khóa học{% endblock %}
+
+{% block content %}
+
+<style>
+    /* ================= ADMIN COURSE PAGE ================= */
+    .admin-wrapper {
+        padding: 20px 0;
+    }
+
+    .admin-title {
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* FILTER PANEL */
+    .admin-filter-box {
+        background: #1d1d2a;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .admin-filter-box label {
+        color: #c8c8e8;
+        font-weight: 600;
+    }
+
+    /* TABLE */
+   
+    /* NỀN BẢNG TỐI ĐỒNG NHẤT */
+    .admin-table {
+        background: #1d1d27 !important;
+        border-collapse: collapse !important;
+        color: #f5f5f5 !important;
+        width: 100%;
+    }
+
+    /* HEADER BẢNG */
+    .admin-table thead th {
+        background: #2a2a38 !important;
+        color: #fff !important;
+        font-weight: 700;
+        border-bottom: 2px solid #3a3a4a;
+        padding: 12px;
+    }
+
+    /* DÒNG DỮ LIỆU */
+    .admin-table tbody td {
+        background: #1d1d27 !important;
+        color: #e6e6e6 !important;
+        border-color: #3a3a4a !important;
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+    /* ZEBRA (dòng xen kẻ) */
+    .admin-table tbody tr:nth-child(even) td {
+        background: #232334 !important;
+    }
+
+    /* HOVER DÒNG */
+    .admin-table tbody tr:hover td {
+        background: #2d2d42 !important;
+    }
+
+    /* CÁC BUTTON */
+    .admin-btn-edit {
+        background: #ffc107;
+        color: #000;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+
+    .admin-btn-delete {
+        background: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+
+    /* PAGINATION */
+    .admin-pagination .page-link {
+        background: #2d2d3a;
+        border: 1px solid #444;
+        color: #ddd;
+    }
+
+    .admin-pagination .page-item.active .page-link {
+        background: #4f57ff;
+        border-color: #4f57ff;
+        color: white;
+    }
+</style>
+
+<div class="admin-wrapper">
+
+    <h2 class="admin-title">Quản lý khóa học</h2>
+
+    <a href="{{ url_for('admin_course.add_course') }}" class="btn btn-primary mb-3">
+        + Thêm khóa học
+    </a>
+
+<!-- BỘ LỌC -->
+<div class="filter-box mb-4">
+    <form method="GET" class="row g-3">
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Lĩnh vực</label>
+            <select name="category" class="form-select">
+                <option value="all">Tất cả</option>
+                {% for cat in all_categories %}
+                <option value="{{ cat }}" {% if request.args.get('category')==cat %}selected{% endif %}>
+                    {{ cat }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Lọc theo Giảng viên -->
+        <div class="col-md-3 ">
+            <label class="form-label text-white">Giảng viên</label>
+            <select name="instructor" class="form-select">
+                <option value="all">Tất cả giảng viên</option>
+                {% for t in teachers %}
+                <option value="{{ t._id }}" {% if selected_instructor==t._id|string %}selected{% endif %}>
+                    {{ t.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label text-white">Độ khó</label>
+            <select name="difficulty" class="form-select">
+                <option value="all">Tất cả</option>
+                <option value="beginner" {% if request.args.get('difficulty')=='beginner' %}selected{% endif %}>Beginner
+                </option>
+                <option value="intermediate" {% if request.args.get('difficulty')=='intermediate' %}selected{% endif %}>
+                    Intermediate</option>
+                <option value="advanced" {% if request.args.get('difficulty')=='advanced' %}selected{% endif %}>Advanced
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Kỹ năng yêu cầu</label>
+            <select name="skill" class="form-select">
+                <option value="all">Tất cả</option>
+                {% for sk in all_skills %}
+                <option value="{{ sk }}" {% if request.args.get('skill')==sk %}selected{% endif %}>
+                    {{ sk }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label text-white">Từ khóa</label>
+            <input type="text" name="keyword" class="form-control" placeholder="Ví dụ: python, web, api..."
+                value="{{ request.args.get('keyword') }}">
+        </div>
+
+        <div class="col-md-1 d-flex align-items-end">
+            <button class="btn btn-primary w-100">Lọc</button>
+        </div>
+
+    </form>
+</div>
+
+    <!-- ===================== TABLE ===================== -->
+    <table class="table admin-table table-bordered align-middle">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Lĩnh vực</th>
+                <th>Độ khó</th>
+                <th>Thời lượng</th>
+                <th width="150">Hành động</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for c in courses %}
+            <tr>
+                <td>{{ c.title }}</td>
+                <td>{{ c.category }}</td>
+                <td>{{ c.difficulty }}</td>
+                <td>{{ c.duration_weeks }} tuần</td>
+                <td>
+                    <a href="{{ url_for('admin_course.edit_course', cid=c._id) }}"
+                        class="admin-btn admin-btn-edit btn-sm">Sửa</a>
+
+                    <a href="{{ url_for('admin_course.delete_course', cid=c._id) }}"
+                        onclick="return confirm('Bạn chắc chắn muốn xóa?')"
+                        class="admin-btn admin-btn-delete btn-sm">Xóa</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- ===================== PAGINATION ===================== -->
+    <nav>
+        <ul class="pagination admin-pagination mt-3">
+
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page-1 }}&{{ query_string }}">«</a>
+            </li>
+            {% endif %}
+
+            {% for p in range(1, total_pages+1) %}
+            <li class="page-item {% if page == p %}active{% endif %}">
+                <a class="page-link" href="?page={{ p }}&{{ query_string }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page < total_pages %} <li class="page-item">
+                <a class="page-link" href="?page={{ page+1 }}&{{ query_string }}">»</a>
+                </li>
+                {% endif %}
+
+        </ul>
+    </nav>
+
+</div>
+
+{% endblock %}

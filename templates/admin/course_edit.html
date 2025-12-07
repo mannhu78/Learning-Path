@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Chỉnh sửa khóa học{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-box {
+        background: #1b1b27;
+        padding: 32px;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+        border: 1px solid #2b2b3d;
+        max-width: 850px;
+        margin: auto;
+        color: #e8e8ff;
+    }
+
+    .edit-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 18px;
+    }
+
+    label {
+        margin-top: 18px;
+        font-weight: 600;
+        color: #c7c7ff;
+    }
+
+    .form-control,
+    .form-select {
+        background: #242436 !important;
+        border: 1px solid #3a3a55 !important;
+        color: #f0f0ff !important;
+        border-radius: 8px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #6b8bff !important;
+        background: #2f2f46 !important;
+        color: #fff !important;
+        box-shadow: 0 0 0 0.2rem rgba(107, 139, 255, 0.35);
+    }
+
+    .btn-save {
+        background: #5868ff;
+        border: none;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        width: 100%;
+        font-weight: 600;
+        margin-top: 28px;
+        transition: .2s;
+    }
+
+    .btn-save:hover {
+        background: #7a88ff;
+    }
+</style>
+
+
+<div class="edit-box mt-4">
+
+    <div class="edit-title">Chỉnh sửa khóa học</div>
+    <hr style="border-color:#36364e;">
+
+
+    <form method="POST">
+
+        <!-- TITLE -->
+        <label>Tiêu đề</label>
+        <input type="text" name="title" class="form-control" value="{{ course.title }}" required>
+
+        <!-- DESCRIPTION -->
+        <label>Mô tả</label>
+        <textarea name="description" class="form-control" rows="3">{{ course.description }}</textarea>
+
+        <!-- CATEGORY -->
+        <label>Lĩnh vực</label>
+        <select name="category" class="form-select">
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if course.category==cat %}selected{% endif %}>
+                {{ cat }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <!-- DIFFICULTY -->
+        <label>Độ khó</label>
+        <select name="difficulty" class="form-select">
+            <option value="beginner" {% if course.difficulty=="beginner" %}selected{% endif %}>Beginner</option>
+            <option value="intermediate" {% if course.difficulty=="intermediate" %}selected{% endif %}>Intermediate
+            </option>
+            <option value="advanced" {% if course.difficulty=="advanced" %}selected{% endif %}>Advanced</option>
+        </select>
+
+        <!-- DURATION -->
+        <label>Thời lượng (tuần)</label>
+        <input type="number" name="duration_weeks" class="form-control" value="{{ course.duration_weeks }}">
+
+        <!-- SKILLS -->
+        <label>Kỹ năng yêu cầu (cách nhau dấu phẩy)</label>
+        <input type="text" name="skills_required" class="form-control"
+            value="{{ course.skills_required | join(', ') }}">
+
+        <!-- THEORY -->
+        <label>Lý thuyết (Markdown)</label>
+        <textarea name="theory" class="form-control" rows="8">{{ course.theory }}</textarea>
+
+        <!-- RESOURCES -->
+        <label>Tài nguyên (mỗi dòng 1 link)</label>
+        <textarea name="resources" class="form-control" rows="4">{{ resources_text }}</textarea>
+
+
+        <!-- TEACHER DROPDOWN -->
+        <label>Giảng viên</label>
+        <select name="instructor_id" class="form-select">
+            <option value="">-- Không chọn --</option>
+
+            {% for t in teachers %}
+            <option value="{{ t._id }}" {% if course.instructor_id and course.instructor_id==t._id %}selected{% endif
+                %}>
+                {{ t.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+
+        <button class="btn-save">Cập nhật khóa học</button>
+    </form>
+
+</div>
+
+{% endblock %}
